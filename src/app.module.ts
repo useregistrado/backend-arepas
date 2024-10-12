@@ -5,6 +5,7 @@ import { TypeOrmModule } from './config/typeorm.module';
 import { UsersModule } from './users/users.module';
 import { RolesandpermissionsModule } from './rolesandpermissions/rolesandpermissions.module';
 import { EndpointsAutoregisterModule } from './endpoints-autoregister/endpoints-autoregister.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { EndpointsAutoregisterModule } from './endpoints-autoregister/endpoints-
     UsersModule,
     RolesandpermissionsModule,
     EndpointsAutoregisterModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

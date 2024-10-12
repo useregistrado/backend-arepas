@@ -42,6 +42,11 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
+  async findOneByUsername(username: string): Promise<User> {
+    const user = this.userRepository.findOneBy({ username });
+    return user;
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
