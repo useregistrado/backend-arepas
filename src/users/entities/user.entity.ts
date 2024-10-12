@@ -1,11 +1,13 @@
 import { Roles } from 'src/rolesandpermissions/entities/roles.entity';
 import {
   Column,
+  CreateDateColumn,
   Entity,
   Generated,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
@@ -18,15 +20,15 @@ export class User {
   uid: string;
 
   @Column({ type: 'varchar', length: 30 })
-  name: string;
+  names: string;
 
   @Column({ type: 'varchar', length: 30 })
-  surname: string;
+  surnames: string;
 
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 15, unique: true })
   username: string;
 
-  @Column({ type: 'varchar', length: 30 })
+  @Column({ type: 'varchar', length: 30, unique: true })
   email: string;
 
   @Column({ type: 'varchar', length: 30 })
@@ -38,7 +40,7 @@ export class User {
   @Column({ type: 'varchar', length: 15 })
   number_phone: string;
 
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 15, nullable: true })
   @JoinColumn({ name: 'number_phone_second' })
   number_phone_second: string;
 
@@ -49,14 +51,27 @@ export class User {
   @JoinColumn({ name: 'enabled_to_use_erp' })
   enabled_to_use_erp: boolean;
 
-  @Column({ type: 'varchar', length: 15 })
+  @Column({ type: 'varchar', length: 65 })
   password: string;
 
-  @Column()
+  @Column({ default: false })
   @JoinColumn({ name: 'deleted_from_erp' })
   deleted_from_erp: boolean;
 
   @ManyToOne(() => Roles, (role) => role.users)
   @JoinColumn({ name: 'id_rol' })
   id_rol: Roles;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }

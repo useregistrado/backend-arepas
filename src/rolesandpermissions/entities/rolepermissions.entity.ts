@@ -1,4 +1,11 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Roles } from './roles.entity';
 import { Permissions } from './permissions.entity';
 
@@ -14,4 +21,17 @@ export class RolePermissions {
   @ManyToOne(() => Permissions, (permission) => permission.rol_permissions)
   @JoinColumn({ name: 'id_permission' })
   id_permission: Permissions;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  updated_at: Date;
 }
