@@ -1,8 +1,10 @@
+import { Roles } from 'src/rolesandpermissions/entities/roles.entity';
 import {
   Column,
   Entity,
   Generated,
   JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -53,4 +55,8 @@ export class User {
   @Column()
   @JoinColumn({ name: 'deleted_from_erp' })
   deleted_from_erp: boolean;
+
+  @ManyToOne(() => Roles, (role) => role.users)
+  @JoinColumn({ name: 'id_rol' })
+  id_rol: Roles;
 }
