@@ -19,8 +19,8 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Usuario o credenciales inválidas');
     }
-    const { password, ...data } = user;
-    const payload = { sub: user.id };
+    const { password, permissions, ...data } = user;
+    const payload = { sub: user.id, permissions };
     const isMatch = await this.comparePasswords(
       loginCredentials.password,
       password,

@@ -75,3 +75,12 @@ export class User {
   })
   updated_at: Date;
 }
+
+export class UserWithPermissions extends User {
+  permissions: PermissionUser[];
+}
+
+export class PermissionUser {
+  resource: string;
+  method: string;
+}

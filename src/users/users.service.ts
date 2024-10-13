@@ -3,8 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
+import { User, UserWithPermissions } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { RolePermissions } from 'src/rolesandpermissions/entities/rolepermissions.entity';
 
 @Injectable()
 export class UsersService {
@@ -42,9 +43,28 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  async findOneByUsername(username: string): Promise<User> {
-    const user = this.userRepository.findOneBy({ username });
-    return user;
+  async findOneByUsername(username: string): Promise<UserWithPermissions> {
+    const user = await this.userRepository.findOne({
+      where: { username },
+      relations: [
+        'id_rol',
+        'id_rol.rol_permissions',
+        'id_rol.rol_permissions.id_permission',
+      ],
+    });
+    const userPermissions = user.id_rol.rol_permissions;
+    console.log(user);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id_rol, ...data } = user;
+
+    const permissions = userPermissions.map((value: RolePermissions) => {
+      return {
+        resource: value.id_permission.full_path,
+        method: value.id_permission.method,
+      };
+    });
+
+    return { id_rol: null, ...data, permissions };
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {
