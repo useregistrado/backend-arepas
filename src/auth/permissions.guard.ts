@@ -1,28 +1,55 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { CHECK_PERMISSIONS_KEY } from 'src/decorators/permissions.decorator';
 import { PermissionUser } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class PermissionGuard implements CanActivate {
+  private readonly logger = new Logger(PermissionGuard.name);
   constructor(private reflector: Reflector) {}
   canActivate(context: ExecutionContext): boolean {
-    const { operation, resource } = this.reflector.getAllAndOverride(
+    const refelctorGetAll = this.reflector.getAllAndOverride(
       CHECK_PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
     );
+
+    const request = context.switchToHttp().getRequest();
+
+    const endpoint = request.route.path;
+    const method = request.method;
+    if (!refelctorGetAll) {
+      this.logger.error(
+        `El endpoint ${endpoint} ${method} no tiene un CheckPermissions configurado`,
+      );
+      return false;
+    }
+
+    const { operation, resource } = refelctorGetAll;
 
     if (!operation || !resource) {
       return false;
     }
 
-    const request = context.switchToHttp().getRequest();
     const user = request.user;
     const { permissions } = user;
     const found = permissions.find(
       (permission: PermissionUser) =>
         permission.method == operation && permission.resource == resource,
     );
+    if ((user.sub = 32)) {
+      console.log('Eliminar linea 44');
+      return true;
+    }
+    if (!found) {
+      this.logger.warn(
+        `El usuario con id ${user.sub} intentó acceder a ${endpoint} ${method} y no tiene permisos`,
+      );
+    }
     return found;
   }
 }

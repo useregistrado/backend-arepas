@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User, UserWithPermissions } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { RolePermissions } from 'src/rolesandpermissions/entities/rolepermissions.entity';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UsersService {
@@ -36,7 +37,8 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    const users = this.userRepository.find();
+    return plainToClass(User, users);
   }
 
   findOne(id: number) {
@@ -52,10 +54,17 @@ export class UsersService {
         'id_rol.rol_permissions.id_permission',
       ],
     });
-    const userPermissions = user.id_rol.rol_permissions;
-    console.log(user);
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id_rol, ...data } = user;
+
+    let userPermissions = [];
+    let id_rol_user = null;
+
+    if (id_rol && typeof user.id_rol != 'number') {
+      userPermissions = user.id_rol.rol_permissions;
+      id_rol_user = user.id_rol.id;
+    }
 
     const permissions = userPermissions.map((value: RolePermissions) => {
       return {
@@ -64,7 +73,7 @@ export class UsersService {
       };
     });
 
-    return { id_rol: null, ...data, permissions };
+    return { id_rol: id_rol_user, ...data, permissions };
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

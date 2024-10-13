@@ -1,4 +1,5 @@
 import { Roles } from 'src/rolesandpermissions/entities/roles.entity';
+import { Exclude } from 'class-transformer';
 import {
   Column,
   CreateDateColumn,
@@ -52,6 +53,7 @@ export class User {
   enabled_to_use_erp: boolean;
 
   @Column({ type: 'varchar', length: 65 })
+  @Exclude()
   password: string;
 
   @Column({ default: false })
@@ -60,7 +62,7 @@ export class User {
 
   @ManyToOne(() => Roles, (role) => role.users)
   @JoinColumn({ name: 'id_rol' })
-  id_rol: Roles;
+  id_rol: Roles | number;
 
   @CreateDateColumn({
     type: 'timestamp',
