@@ -27,6 +27,7 @@ export class UsersController {
   }
 
   @Get()
+  @CheckPermissions('GET', 'users/')
   findAll() {
     return this.usersService.findAll();
   }
