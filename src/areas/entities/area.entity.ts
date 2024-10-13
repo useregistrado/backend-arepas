@@ -1,3 +1,4 @@
+import { WorkOrder } from 'src/work_orders/entities/work_order.entity';
 import {
   PrimaryGeneratedColumn,
   Column,
@@ -5,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Entity,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -34,4 +36,7 @@ export class Area {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
+
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder)
+  work_orders: WorkOrder[];
 }

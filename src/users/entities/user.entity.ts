@@ -7,9 +7,12 @@ import {
   Generated,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { WorkOrder } from 'src/work_orders/entities/work_order.entity';
+import { PersonInCharge } from 'src/work_orders/entities/person_in_charge.entity';
 
 @Entity()
 export class User {
@@ -76,6 +79,12 @@ export class User {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
+
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder)
+  work_orders: WorkOrder[];
+
+  @OneToMany(() => PersonInCharge, (personInCharge) => personInCharge)
+  person_in_charge: PersonInCharge[];
 }
 
 export class UserWithPermissions extends User {
