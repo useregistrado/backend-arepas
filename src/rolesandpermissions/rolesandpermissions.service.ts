@@ -1,6 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateRolesandpermissionDto } from './dto/create-rolesandpermission.dto';
-import { UpdateRolesandpermissionDto } from './dto/update-rolesandpermission.dto';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateRoleDto } from './dto/create-roles.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Roles } from './entities/roles.entity';
 import { Repository } from 'typeorm';
@@ -9,6 +12,7 @@ import { AssingPermissionsDto } from './dto/assing-permissions.dto';
 import { RolePermissions } from './entities/rolepermissions.entity';
 import { User } from 'src/users/entities/user.entity';
 import { AssingRoleDto } from './dto/assind-role.dto';
+import { PermissionsToRevokeDto } from './dto/permissions-to-revoke.dto';
 
 @Injectable()
 export class RolesandpermissionsService {
@@ -23,8 +27,15 @@ export class RolesandpermissionsService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createRolesandpermissionDto: CreateRolesandpermissionDto) {
-    return 'This action adds a new rolesandpermission';
+  async create(createRoleDto: CreateRoleDto) {
+    const role = await this.findOneRoleByName(createRoleDto.name);
+    if (role) {
+      throw new ConflictException(
+        `Ya existe el role con name ${createRoleDto.name}`,
+      );
+    }
+
+    return this.rolesRepository.save(createRoleDto);
   }
 
   async findAllRoles() {
@@ -88,11 +99,48 @@ export class RolesandpermissionsService {
     return `This action returns a #${id} rolesandpermission`;
   }
 
-  update(id: number, updateRolesandpermissionDto: UpdateRolesandpermissionDto) {
-    return `This action updates a #${id} rolesandpermission`;
+  revokeRole(id: number) {
+    this.userRepository.save({
+      id,
+      id_rol: null,
+    });
+    return 'ok';
+  }
+
+  async revokePermissions(
+    id: number,
+    permissionsToRevokeDto: PermissionsToRevokeDto,
+  ) {
+    const role = await this.findOneRole(id);
+    if (!role) {
+      throw new NotFoundException('No se encontro el role');
+    }
+    const permissionsPromise = permissionsToRevokeDto.id_permissions.map(
+      (id: number) => {
+        return this.findOnePermission(id);
+      },
+    );
+
+    const permissions = await Promise.all(permissionsPromise);
+    const allNotNull = permissions.every((value) => value !== null);
+    if (!allNotNull) {
+      throw new NotFoundException('No existen uno o varios de los permisos');
+    }
+
+    permissions.forEach((permission) => {
+      this.rolesPermissionsRepository.delete({
+        id_permission: permission,
+        id_rol: role,
+      });
+    });
+    return 'ok';
   }
 
   remove(id: number) {
     return `This action removes a #${id} rolesandpermission`;
+  }
+
+  async findOneRoleByName(name: string) {
+    return await this.rolesRepository.findOneBy({ name });
   }
 }
