@@ -7,6 +7,7 @@ import { RolesandpermissionsModule } from './rolesandpermissions/rolesandpermiss
 import { EndpointsAutoregisterModule } from './endpoints-autoregister/endpoints-autoregister.module';
 import { AuthModule } from './auth/auth.module';
 import { AreasModule } from './areas/areas.module';
+import { WorkOrdersModule } from './work_orders/work_orders.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AreasModule } from './areas/areas.module';
     EndpointsAutoregisterModule,
     AuthModule,
     AreasModule,
+    WorkOrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
