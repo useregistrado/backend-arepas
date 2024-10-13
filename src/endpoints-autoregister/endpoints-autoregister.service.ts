@@ -53,10 +53,10 @@ export class EndpointsAutoregisterService {
     });
 
     if (permission) return;
-    this.permissionRepository.save({
+    /* this.permissionRepository.save({
       controller_path: controllerPath,
       full_path: fullPath,
       method,
-    });
+    }); */
   }
 }

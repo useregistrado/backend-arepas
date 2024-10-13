@@ -11,7 +11,7 @@ export class CreateRoleDto {
   @IsNotEmpty()
   @IsString({})
   @MinLength(10, {
-    message: 'El atributo names debe ser de al menos diez caracteres.',
+    message: 'El atributo description debe ser de al menos diez caracteres.',
   })
   description: string;
 }

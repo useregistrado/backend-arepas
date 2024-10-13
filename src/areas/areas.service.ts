@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateAreaDto } from './dto/create-area.dto';
 import { UpdateAreaDto } from './dto/update-area.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Area } from './entities/area.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AreasService {
-  create(createAreaDto: CreateAreaDto) {
-    return 'This action adds a new area';
+  constructor(
+    @InjectRepository(Area)
+    private areaRepository: Repository<Area>,
+  ) {}
+  async create(createAreaDto: CreateAreaDto) {
+    if (await this.findOneByName(createAreaDto.name)) {
+      throw new ConflictException(
+        `Ya existe el area con name ${createAreaDto.name}`,
+      );
+    }
+    return this.areaRepository.save(createAreaDto);
   }
 
   findAll() {
-    return `This action returns all areas`;
+    return this.areaRepository.findBy({ deleted_from_erp: false });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} area`;
+    return this.areaRepository.findOneBy({ id });
   }
 
-  update(id: number, updateAreaDto: UpdateAreaDto) {
-    return `This action updates a #${id} area`;
+  async findOneByName(name: string) {
+    return this.areaRepository.findOneBy({ name });
+  }
+
+  async update(id: number, updateAreaDto: UpdateAreaDto) {
+    const area = await this.areaRepository.findOneBy({ id });
+    area.name = updateAreaDto.name;
+    area.description = updateAreaDto.description;
+    return this.areaRepository.save(area);
   }
 
   remove(id: number) {
-    return `This action removes a #${id} area`;
+    return this.areaRepository.save({
+      id,
+      deleted_from_erp: true,
+    });
   }
 }
