@@ -1,10 +1,10 @@
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
 
-export class CreateRoleDto {
+export class CreateAreaDto {
   @IsNotEmpty()
   @IsString({})
   @MinLength(5, {
-    message: 'El atributo names debe ser de al menos cinco caracteres.',
+    message: 'El atributo name debe ser de al menos cinco caracteres.',
   })
   name: string;
 
