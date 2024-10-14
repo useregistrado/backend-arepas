@@ -41,8 +41,8 @@ export class UsersService {
     return plainToClass(User, users);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    return await this.userRepository.findOneBy({ id });
   }
 
   async findOneByUsername(username: string): Promise<UserWithPermissions> {

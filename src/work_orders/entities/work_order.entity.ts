@@ -23,7 +23,7 @@ export class WorkOrder {
   @Column({ type: 'varchar', length: 500 })
   description: string;
 
-  @Column({ name: 'deleted_from_erp' })
+  @Column({ name: 'deleted_from_erp', default: false })
   deleted_from_erp: boolean;
 
   @Column({ name: 'execution_date' })
@@ -62,6 +62,9 @@ export class WorkOrder {
   @JoinColumn({ name: 'id_area' })
   id_area: User;
 
-  @OneToMany(() => PersonInCharge, (personInCharge) => personInCharge)
+  @OneToMany(
+    () => PersonInCharge,
+    (personInCharge) => personInCharge.id_work_order,
+  )
   person_in_charge: PersonInCharge[];
 }

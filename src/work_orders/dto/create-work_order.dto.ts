@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import {
   IsArray,
   IsDate,
@@ -10,16 +11,19 @@ import {
 export class CreateWorkOrderDto {
   @IsNotEmpty()
   @IsString()
-  @MinLength(5, { message: 'El nombre debe ser de minimo 5 caracteres' })
+  @MinLength(5, { message: 'El campo name debe ser de minimo 5 caracteres' })
   name: string;
 
   @IsNotEmpty()
   @IsString()
-  @MinLength(5, { message: 'La descripcion debe ser de minimo 10 caracteres' })
+  @MinLength(5, {
+    message: 'El campo description debe ser de minimo 10 caracteres',
+  })
   description: string;
 
   @IsNotEmpty()
   @IsDate()
+  @Transform(({ value }) => new Date(value))
   execution_date: Date;
 
   @IsNotEmpty()
@@ -37,10 +41,6 @@ export class CreateWorkOrderDto {
   @IsNotEmpty()
   @IsNumber()
   id_area: number;
-
-  @IsNotEmpty()
-  @IsNumber()
-  id_user: number;
 
   @IsNotEmpty()
   @IsArray()

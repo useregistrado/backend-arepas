@@ -80,10 +80,10 @@ export class User {
   })
   updated_at: Date;
 
-  @OneToMany(() => WorkOrder, (workOrder) => workOrder)
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder.id_user)
   work_orders: WorkOrder[];
 
-  @OneToMany(() => PersonInCharge, (personInCharge) => personInCharge)
+  @OneToMany(() => PersonInCharge, (personInCharge) => personInCharge.id_user)
   person_in_charge: PersonInCharge[];
 }
 
